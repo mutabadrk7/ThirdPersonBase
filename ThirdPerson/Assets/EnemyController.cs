@@ -17,21 +17,20 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     PlayerController player;
     [SerializeField]
-    EnemySight sight;
-    [SerializeField]
-    Collider[] ragdollColliders;
+    Sight obstacleSight;
 
     Vector3 goalLocation;
+    Vector3 currentTargetLocation;
     bool shouldMove = false;
     bool dead = false;
+
+    float timeSinceChecked = 0;
+    bool blocked = false;
 
     // Start is called before the first frame update
     void Awake()
     {
-        foreach (Collider c in ragdollColliders)
-        {
-            c.isTrigger = true;
-        }
+        shouldMove = true;
     }
 
     // Update is called once per frame
@@ -39,63 +38,106 @@ public class EnemyController : MonoBehaviour
     {
         if (dead)
             return;
-        if(ScanForPlayer())
+
+        goalLocation = FindObjectOfType<PlayerController>().transform.position;
+
+        //var fullVision = sight.Sight(90, 10, Color.red);
+        var directlyInFront = obstacleSight.GetSightInformation();// (90, 3, 3, Color.blue);
+
+        blocked = false;
+
+        for(int i = 0; i < directlyInFront.Length; i++)
         {
-            shouldMove = true;
-            transform.LookAt(new Vector3(goalLocation.x, 0, goalLocation.z));
+            var current = directlyInFront[i];
+
+            if (current.seen == true && current.tag == "Environment")
+            {
+                // we've got something blocking us
+                blocked = true;
+            }
+            
         }
 
-        if(shouldMove && Vector3.Distance(transform.position, goalLocation) < meleeRange)
+        Debug.Log(blocked);
+
+        // if we're blocked, find the first sight that isn't obstructed and head that way
+        if(blocked)
         {
-            shouldMove = false;
+            if (timeSinceChecked > 1)
+            {
+                HandleBlocked(directlyInFront);
+                timeSinceChecked = 0;
+            }
         }
         
+        else
+        {
+            currentTargetLocation = goalLocation;
+        }
+
+        timeSinceChecked += Time.deltaTime;
+
+        Debug.DrawLine(currentTargetLocation, currentTargetLocation + Vector3.up * 5, Color.green);
+
+
+        if (shouldMove)
+        {
+            currentTargetLocation.y = 0;
+            //transform.LookAt(currentTargetLocation);
+
+            Quaternion toRotation = Quaternion.LookRotation(currentTargetLocation - transform.position);
+            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 0.5f * Time.deltaTime);
+        }
+
+        if (!shouldMove && Vector3.Distance(transform.position, goalLocation) > meleeRange * 2)
+        {
+            shouldMove = true;
+        }
+
+
+        if (Vector3.Distance(transform.position, goalLocation) < meleeRange)
+        {
+            shouldMove = false;
+            //goalLocation = Vector3.zero;
+        }
+
+        
+
         GetComponent<Rigidbody>().velocity = transform.forward * moveSpeed * (shouldMove ? 1 : 0);
         GetComponent<Animator>().SetFloat("moveSpeed", GetComponent<Rigidbody>().velocity.magnitude);
 
-        /*if(Input.GetButton("Jump"))
-        {
-            GoRagdoll();
-        }*/
-    }
-
-    bool ScanForPlayer()
-    {
-        foreach (SightInformation s in sight.CheckForObject())
-        {
-            // if we find player, and we're not super close, set goal location
-            if (s.seen && s.tag == "Player" && Vector3.Distance(transform.position, s.location) > meleeRange)
-            {
-                goalLocation = s.location;
-                goalLocation.y = 0;
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.transform.tag == "Sword" && !dead)
         {
-            GoRagdoll();
-
             Destroy(gameObject, 3.0f);
         }
     }
 
-    void GoRagdoll()
+    void HandleBlocked(SightInformation[] directlyInFront)
     {
-        shouldMove = false;
-        GetComponent<CapsuleCollider>().isTrigger = true;
-        dead = true;
-        GetComponent<Animator>().enabled = false;
-
-        foreach (Collider c in ragdollColliders)
+        Vector3 acceptableLocation = Vector3.zero;
+        bool found = false;
+        for (int i = 0; i < directlyInFront.Length; i++)
         {
-            c.isTrigger = false;
+            var current = directlyInFront[i];
+
+
+            if (current.seen == false)
+            {
+                if (!found)
+                {
+                    acceptableLocation = current.location;
+                    found = true;
+
+                }
+            }
         }
+
+        //currentTargetLocation = (goalLocation + acceptableLocation) / 2;
+        currentTargetLocation = acceptableLocation;
     }
 
     
