@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             timeSinceButtonPressed = 0;
         }
 
-        if (Input.GetButtonDown("Aim"+"Jump") )
+        if (Input.GetButtonDown("Aim") )
         {
             anim.SetTrigger("Throw");
             
