@@ -59,6 +59,12 @@ public class PlayerController : MonoBehaviour
             timeSinceButtonPressed = 0;
         }
 
+        if (Input.GetButtonDown("Aim"+"Jump") )
+        {
+            anim.SetTrigger("Throw");
+            
+        }
+
         timeSinceButtonPressed += Time.deltaTime;
     }
 
@@ -92,4 +98,10 @@ public class PlayerController : MonoBehaviour
         swordCollider.enabled = false;
     }
 
+
+    public void AxeThrowShot()
+    {
+        rb.isKinematic =
+        transform.parent = null;
+    }
 }
