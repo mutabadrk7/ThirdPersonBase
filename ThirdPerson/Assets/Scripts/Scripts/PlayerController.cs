@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     bool startedCombo = false;
     float timeSinceButtonPressed = 0.0f;
 
+    Cinemachine.CinemachineImpulseSource source;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -61,8 +63,9 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetButtonDown("Aim") )
         {
-            anim.SetTrigger("Throw");
-            
+
+            Aim();
+
         }
 
         timeSinceButtonPressed += Time.deltaTime;
@@ -101,7 +104,17 @@ public class PlayerController : MonoBehaviour
 
     public void AxeThrowShot()
     {
+        source = GetComponent<Cinemachine.CinemachineImpulseSource>();
+
+
+        source.GenerateImpulse(Camera.main.transform.forward);
+
+        anim.SetTrigger("Throw");
         rb.isKinematic =
-        transform.parent = null;
+    transform.parent = null;
+    }
+    public void Aim()
+    {
+
     }
 }
