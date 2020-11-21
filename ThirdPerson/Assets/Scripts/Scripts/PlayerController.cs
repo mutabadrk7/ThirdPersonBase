@@ -108,13 +108,17 @@ public class PlayerController : MonoBehaviour
 
 
         source.GenerateImpulse(Camera.main.transform.forward);
-
         anim.SetTrigger("Throw");
+       
         rb.isKinematic =
     transform.parent = null;
     }
     public void Aim()
     {
+        if (Input.GetButtonDown("Jump") && Input.GetButtonDown("Aim"))
+        {
+            AxeThrowShot();
+        }
 
     }
 }
