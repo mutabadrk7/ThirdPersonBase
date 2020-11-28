@@ -22,14 +22,15 @@ public class Camerachange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Aim") && !aimCamera.activeInHierarchy)
+
+        if (Input.GetButton("Aim") && !aimCamera.activeInHierarchy)
         { 
              mainCamara.SetActive(false);
             aimCamera.SetActive(true);
 
-           // StartCoroutine(ShowReticle());
+            StartCoroutine(ShowReticle());
         }
-        else if(!Input.GetButtonDown("Aim") && aimCamera.activeInHierarchy)
+        else if(!Input.GetButton("Aim") && aimCamera.activeInHierarchy)
         {
             
             mainCamara.SetActive(true);

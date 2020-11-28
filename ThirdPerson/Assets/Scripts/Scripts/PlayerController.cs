@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     BoxCollider swordCollider;
 
+    public GameObject axe;
+
     Rigidbody rb;
     Animator anim;
 
@@ -50,13 +52,13 @@ public class PlayerController : MonoBehaviour
 
         anim.SetFloat("moveSpeed", Mathf.Abs(moveDirection.magnitude));
 
-        if(Input.GetButtonDown("Jump") && !startedCombo)
+        if(Input.GetButtonDown("Jump") && !startedCombo && !Input.GetButton("Aim"))
         {
             anim.SetTrigger("swordCombo");
             startedCombo = true;
         }
 
-        if(Input.GetButtonDown("Jump") && startedCombo)
+        if(Input.GetButtonDown("Jump") && startedCombo )
         {
             timeSinceButtonPressed = 0;
         }
@@ -68,6 +70,10 @@ public class PlayerController : MonoBehaviour
 
         }
 
+        if (Input.GetButtonDown("Jump") && Input.GetButton("Aim"))
+        {
+            anim.SetTrigger("Throw");
+        }
         timeSinceButtonPressed += Time.deltaTime;
     }
 
@@ -104,21 +110,21 @@ public class PlayerController : MonoBehaviour
 
     public void AxeThrowShot()
     {
-        source = GetComponent<Cinemachine.CinemachineImpulseSource>();
+        var camForward = mainCamera.forward;
+
+        GameObject clone;
+        clone = Instantiate(axe, new Vector3(transform.position.x, transform.position.y + 1, transform.position.z +7), mainCamera.rotation) as GameObject;
 
 
-        source.GenerateImpulse(Camera.main.transform.forward);
-        anim.SetTrigger("Throw");
-       
-        rb.isKinematic =
-    transform.parent = null;
+
+        swordCollider.enabled = true;
+
+
+
     }
     public void Aim()
     {
-        if (Input.GetButtonDown("Jump") && Input.GetButtonDown("Aim"))
-        {
-            AxeThrowShot();
-        }
+        
 
     }
 }

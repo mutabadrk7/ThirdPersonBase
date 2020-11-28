@@ -1014,6 +1014,7 @@ MonoBehaviour:
   moveSpeed: 3
   mainCamera: {fileID: 0}
   swordCollider: {fileID: 3250335847090195191}
+  axe: {fileID: 0}
 --- !u!1 &2458547202421260870
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,6 +1310,7 @@ GameObject:
   - component: {fileID: 3250335847090195188}
   - component: {fileID: 3250335847090195191}
   - component: {fileID: 6742157140883960883}
+  - component: {fileID: 729873000039860866}
   m_Layer: 0
   m_Name: Axe Model
   m_TagString: Untagged
@@ -1388,6 +1390,18 @@ MonoBehaviour:
     m_DissipationMode: 2
     m_DissipationDistance: 1000
     m_PropagationSpeed: 343
+--- !u!114 &729873000039860866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3250335847090195189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 361f63736300b1643b2044340bbc5f68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3250335847237042946
 GameObject:
   m_ObjectHideFlags: 0
